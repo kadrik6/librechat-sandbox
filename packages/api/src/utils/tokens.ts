@@ -1,26 +1,6 @@
 import z from 'zod';
-import {
-  EModelEndpoint,
-  maxTokensMap,
-  maxOutputTokensMap,
-  TOKEN_DEFAULTS,
-  findMatchingPattern as findMatchingPatternSimple,
-  getModelMaxTokens as getModelMaxTokensSimple,
-  getModelMaxOutputTokens as getModelMaxOutputTokensSimple,
-  matchModelName as matchModelNameSimple,
-} from 'librechat-data-provider';
+import { EModelEndpoint, maxTokensMap, maxOutputTokensMap } from 'librechat-data-provider';
 import type { EndpointTokenConfig, TokenConfig } from '~/types';
-
-// Re-export from data-provider for backwards compatibility
-export { maxTokensMap, maxOutputTokensMap, TOKEN_DEFAULTS };
-
-// Re-export simple versions (for use without EndpointTokenConfig)
-export {
-  findMatchingPatternSimple,
-  getModelMaxTokensSimple,
-  getModelMaxOutputTokensSimple,
-  matchModelNameSimple,
-};
 
 /**
  * Finds the first matching pattern in the tokens map.
