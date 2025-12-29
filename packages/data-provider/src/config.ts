@@ -849,6 +849,11 @@ export const configSchema = z.object({
   includedTools: z.array(z.string()).optional(),
   filteredTools: z.array(z.string()).optional(),
   mcpServers: MCPServersSchema.optional(),
+  mcpSettings: z
+    .object({
+      allowedDomains: z.array(z.string()).optional(),
+    })
+    .optional(),
   interface: interfaceSchema,
   turnstile: turnstileSchema.optional(),
   fileStrategy: fileSourceSchema.default(FileSources.local),
@@ -1234,6 +1239,7 @@ export enum InfiniteCollections {
  */
 export enum Time {
   ONE_DAY = 86400000,
+  TWELVE_HOURS = 43200000,
   ONE_HOUR = 3600000,
   THIRTY_MINUTES = 1800000,
   TEN_MINUTES = 600000,
@@ -1595,7 +1601,7 @@ export enum TTSProviders {
 /** Enum for app-wide constants */
 export enum Constants {
   /** Key for the app's version. */
-  VERSION = 'v0.8.1',
+  VERSION = 'v0.8.2-rc1',
   /** Key for the Custom Config's version (librechat.yaml). */
   CONFIG_VERSION = '1.3.1',
   /** Standard value for the first message's `parentMessageId` value, to indicate no parent exists. */

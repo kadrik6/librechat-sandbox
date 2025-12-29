@@ -122,11 +122,9 @@ function ConvoOptions({
       if (!convoId) {
         return;
       }
-
       const messages = queryClient.getQueryData<TMessage[]>([QueryKeys.messages, convoId]);
       const thread_id = messages?.[messages.length - 1]?.thread_id;
       const endpoint = messages?.[messages.length - 1]?.endpoint;
-
       deleteMutation.mutate({ conversationId: convoId, thread_id, endpoint, source: 'button' });
     },
     [conversationId, deleteMutation, queryClient],
@@ -148,12 +146,10 @@ function ConvoOptions({
             setTimeout(() => {
               setAnnouncement('');
             }, 10000);
-
             if (currentConvoId === convoId || currentConvoId === 'new') {
               newConversation();
               navigate('/c/new', { replace: true });
             }
-
             retainView();
             setIsPopoverActive(false);
           },
