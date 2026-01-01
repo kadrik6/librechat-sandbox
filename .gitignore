@@ -1,5 +1,25 @@
 ### node etc ###
 
+# Secrets
+.env
+
+# Runtime data
+logs/
+uploads/
+
+# Docker
+*.log
+docker-compose.override.yml
+
+# Node / Python
+node_modules/
+__pycache__/
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
 # Logs
 data-node
 meili_data*

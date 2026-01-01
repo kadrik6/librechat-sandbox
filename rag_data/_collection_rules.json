@@ -1,0 +1,10 @@
+{
+  "required_metadata_fields": [
+    "source",
+    "document_type",
+    "status",
+    "version_date",
+    "use_limit"
+  ],
+  "allowed_status": ["avalik"]
+}
