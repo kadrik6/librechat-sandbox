@@ -1,0 +1,33 @@
+name: Sandbox consistency check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  sandbox-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run ingest check
+        run: |
+          cd notebooks
+          python ingest_check.py
+
+      - name: Run metadata validation
+        run: |
+          cd notebooks
+          python metadata_validation.py
+
+      - name: Run sandbox policy check
+        run: |
+          cd notebooks
+          python policy_check.py

@@ -1,0 +1,4 @@
+Õigusloome sandboxi testdokument.
+
+Punkt A: AI ei tohi anda kindlat vastust, kui õiguslik alus puudub.
+Punkt B: Kui infot ei ole piisavalt, tuleb see selgelt välja öelda.
