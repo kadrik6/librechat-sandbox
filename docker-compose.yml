@@ -4,11 +4,15 @@ services:
   api:
     container_name: LibreChat
     image: ghcr.io/danny-avila/librechat:latest
+    user: "1000:1000"
     restart: always
+
     ports:
       - "${PORT:-3080}:3080"
+
     env_file:
       - .env
+
     environment:
       HOST: 0.0.0.0
       RAG_PORT: 8000
@@ -26,45 +30,26 @@ services:
 
     volumes:
       - ./images:/app/client/public/images
-      - ./uploads:/app/uploads
       - ./librechat.yaml:/app/librechat.yaml
-
+      - librechat_uploads:/app/uploads
 
   mongodb:
     container_name: chat-mongodb
     image: mongo:6.0
     restart: always
     command: mongod --noauth
-    tmpfs:
-      - /data/db
+    volumes:
+      - mongo_data:/data/db
 
   meilisearch:
     container_name: chat-meilisearch
     image: getmeili/meilisearch:v1.12.3
     restart: always
     environment:
-      - MEILI_NO_ANALYTICS=true
-      - MEILI_ENV=development
+      MEILI_NO_ANALYTICS: "true"
+      MEILI_ENV: development
     tmpfs:
       - /meili_data
-
-  rag_api:
-    container_name: rag_api
-    image: ghcr.io/danny-avila/librechat-rag-api-dev-lite:latest
-    restart: always
-    environment:
-      DATABASE_URL: postgresql://rag:rag@vectordb:5432/rag
-      POSTGRES_DB: rag
-      POSTGRES_USER: rag
-      POSTGRES_PASSWORD: rag
-      POSTGRES_HOST: vectordb
-      POSTGRES_PORT: 5432
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-    depends_on:
-      - vectordb
-    ports:
-      - "8000:8000"
-
 
   vectordb:
     container_name: vectordb
@@ -74,3 +59,52 @@ services:
       POSTGRES_DB: rag
       POSTGRES_USER: rag
       POSTGRES_PASSWORD: rag
+    volumes:
+      - librechat_rag_pgdata:/var/lib/postgresql/data
+    networks:
+      default:
+        aliases:
+          - db
+
+  rag_api:
+    container_name: rag_api
+    image: ghcr.io/danny-avila/librechat-rag-api-dev-lite:latest
+    restart: always
+
+    depends_on:
+      - vectordb
+
+    environment:
+      # PRIMARY (used by LibreChat)
+      DATABASE_URL: postgresql://rag:rag@vectordb:5432/rag
+      PGVECTOR_CONNECTION_STRING: postgresql://rag:rag@vectordb:5432/rag
+
+      # CRITICAL FALLBACKS (fixes "host db")
+      PGHOST: vectordb
+      PGPORT: 5432
+      PGUSER: rag
+      PGPASSWORD: rag
+      PGDATABASE: rag
+
+      POSTGRES_HOST: vectordb
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: rag
+      POSTGRES_PASSWORD: rag
+      POSTGRES_DB: rag
+
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+
+    command: >
+      sh -c "
+      echo 'Waiting for vector DB...' &&
+      sleep 20 &&
+      python main.py
+      "
+
+    ports:
+      - "8000:8000"
+
+volumes:
+  mongo_data:
+  librechat_uploads:
+  librechat_rag_pgdata:
